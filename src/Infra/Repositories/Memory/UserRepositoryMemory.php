@@ -24,4 +24,14 @@ class UserRepositoryMemory implements UserRepository
     {
         $this->users[$user->uuid] = $user;
     }
+
+    public function update(string $uuid, User $user): void
+    {
+        $this->users[$uuid] = $user;
+    }
+
+    public function delete(string $uuid): void
+    {
+        unset($this->users[$uuid]);
+    }
 }

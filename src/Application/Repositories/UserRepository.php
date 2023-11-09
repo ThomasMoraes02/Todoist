@@ -11,4 +11,8 @@ interface UserRepository
     public function byEmail(Email $email): ?User;
 
     public function save(User $user): void;
+
+    public function update(string $uuid, User $user): void;
+
+    public function delete(string $uuid): void;
 }

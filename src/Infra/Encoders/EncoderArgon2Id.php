@@ -7,6 +7,10 @@ class EncoderArgon2Id implements Encoder
 {
     public function encode(string $password): string
     {
+        if(isset(password_get_info($password)['algo'])) {
+            return $password;
+        }
+
         return password_hash($password, PASSWORD_ARGON2ID);
     }
 

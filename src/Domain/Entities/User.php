@@ -15,10 +15,10 @@ class User
         private readonly Encoder $encoder
     ) {}
 
-    public static function create(string $name, string $email, string $password, Encoder $encoder): User
+    public static function create(?string $uuid = null, string $name, string $email, string $password, Encoder $encoder): User
     {
         return new User(
-            Uuid::uuid4(),
+            $uuid ??= Uuid::uuid4(),
             $name,
             new Email($email),
             $encoder->encode($password),

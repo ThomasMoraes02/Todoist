@@ -18,7 +18,6 @@ class CreateUser
     public function execute(array $input): array
     {
         $user = User::create(
-            null,
             $input['name'],
             $input['email'],
             $input['password'],

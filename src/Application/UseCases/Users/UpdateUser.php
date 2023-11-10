@@ -15,7 +15,6 @@ class UpdateUser
         if(!$user) return array('error' => 'User not found');
 
         $user = User::create(
-            $user->uuid,
             $input['name'] ?? $user->name,
             $input['email'] ?? $user->email,
             $input['password'] ?? $user->password,

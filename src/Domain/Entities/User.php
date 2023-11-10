@@ -9,16 +9,16 @@ class User
 {
     public function __construct(
         private readonly string $uuid,
-        private readonly string $name,
-        private readonly Email $email,
-        private readonly string $password,
-        private readonly Encoder $encoder
+        private string $name,
+        private Email $email,
+        private string $password,
+        private Encoder $encoder
     ) {}
 
-    public static function create(?string $uuid = null, string $name, string $email, string $password, Encoder $encoder): User
+    public static function create(string $name, string $email, string $password, Encoder $encoder): User
     {
         return new User(
-            $uuid ??= Uuid::uuid4(),
+            Uuid::uuid4(),
             $name,
             new Email($email),
             $encoder->encode($password),

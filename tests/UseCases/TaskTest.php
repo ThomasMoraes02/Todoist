@@ -1,8 +1,11 @@
 <?php 
 namespace Todoist\Test\UseCases;
 
+use DateTime;
+use DateTimeZone;
 use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
+use Todoist\Domain\Entities\Task\TaskStatusCodes;
 use Todoist\Application\Repositories\TaskRepository;
 use Todoist\Infra\Repositories\Memory\TaskRepositoryMemory;
 use Todoist\Application\UseCases\Tasks\CreateTask\InputTask;
@@ -32,5 +35,25 @@ class TaskTest extends TestCase
         $this->assertInstanceOf(DateTimeInterface::class, $outputTask->due_date);
         $this->assertEquals('PENDING', $outputTask->status->name);
         $this->assertEquals('2023-11-11 00:00:00', $outputTask->due_date->format('Y-m-d H:i:s'));
+    }
+
+    public function test_update_status_task_and_update_field_updated_at()
+    {
+        $inputTask = new InputTask(
+            'Clear the room',
+            'Go to the kitchen and clean the room',
+            '2023-11-11'
+        );
+
+        $outputTask = (new CreateTask($this->taskRepository))->execute($inputTask);
+
+        $task = $this->taskRepository->find($outputTask->uuid);
+        $task->status(TaskStatusCodes::COMPLETED);
+
+        $now = (new DateTime('now', new DateTimeZone('America/Sao_Paulo')))->format('Y-m-d H:i:s');
+
+        $this->assertEquals('COMPLETED', $task->status->name);
+        $this->assertInstanceOf(DateTimeInterface::class, $task->updated_at);
+        $this->assertEquals($now, $task->updated_at->format('Y-m-d H:i:s'));
     }
 }

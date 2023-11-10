@@ -12,12 +12,12 @@ class Task
 {
     public function __construct(
         private readonly string $uuid,
-        private readonly string $title,
-        private readonly string $description,
-        private readonly TaskStatusCodes $status,
-        private readonly ?DateTimeInterface $due_date,
+        private string $title,
+        private string $description,
+        private TaskStatusCodes $status,
+        private ?DateTimeInterface $due_date,
         private readonly DateTimeInterface $created_at,
-        private readonly DateTimeInterface $updated_at,
+        private DateTimeInterface $updated_at,
     ) {}
 
     public static function create(

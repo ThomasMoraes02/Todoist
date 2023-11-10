@@ -2,9 +2,8 @@
 namespace Todoist\Application\UseCases\Users;
 
 use Todoist\Application\Repositories\UserRepository;
-use Todoist\Application\UseCases\UseCase;
 
-class DeleteUser implements UseCase
+class DeleteUser
 {
     public function __construct(private UserRepository $userRepository) {}
 

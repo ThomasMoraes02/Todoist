@@ -2,11 +2,10 @@
 namespace Todoist\Application\UseCases\Users;
 
 use Todoist\Application\Repositories\UserRepository;
-use Todoist\Application\UseCases\UseCase;
 use Todoist\Domain\Entities\Encoder;
 use Todoist\Domain\Entities\User;
 
-class CreateUser implements UseCase
+class CreateUser
 {
     public function __construct(private UserRepository $userRepository, private Encoder $encoder) {}
 

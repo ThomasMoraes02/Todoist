@@ -6,6 +6,7 @@ use DateTimeZone;
 use Ramsey\Uuid\Uuid;
 use DateTimeImmutable;
 use DateTimeInterface;
+use Todoist\Domain\Entities\Task\TaskStatusCodes;
 
 class Task
 {
@@ -13,27 +14,32 @@ class Task
         private readonly string $uuid,
         private readonly string $title,
         private readonly string $description,
+        private readonly TaskStatusCodes $status,
         private readonly ?DateTimeInterface $due_date,
         private readonly DateTimeInterface $created_at,
-        private readonly ?DateTimeInterface $updated_at,
+        private readonly DateTimeInterface $updated_at,
     ) {}
 
     public static function create(
-        ?string $uuid = null,
         string $title,
         string $description,
         ?string $due_date = null,
-        ?string $created_at = null,
-        ?string $updated_at = null
     ): Task {
         return new Task(
-            $uuid ?? Uuid::uuid4(),
+            Uuid::uuid4(),
             $title,
             $description,
-            $due_date ? self::date($due_date) : null,
-            self::date($created_at ?? 'now'), 
-            self::date($updated_at ?? 'now')
+            TaskStatusCodes::PENDING,
+            ($due_date != null) ? self::date($due_date) : null,
+            self::date(), 
+            self::date()
         );
+    }
+
+    public function status(TaskStatusCodes $status): void
+    {
+        $this->status = $status;
+        $this->updated_at = self::date();
     }
 
     private static function date(string $date = 'now'): ?DateTimeImmutable

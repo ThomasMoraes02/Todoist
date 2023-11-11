@@ -9,11 +9,24 @@ class InputTask
     public function __construct(
         public string $title,
         public ?string $description,
-        public ?string $due_date = null
+        public ?string $due_date = null,
+        public ?string $userId = null,
+        public ?string $parentTaskUuid = null
     ) {}
 
-    public function subtask(string $title, ?string $description = null, ?string $due_date = null): void
-    {
-        $this->subtasks[] = new InputTask($title, $description, $due_date);
+    public function subtask(
+        string $title, 
+        ?string $description = null, 
+        ?string $due_date = null, 
+        ?string $userId = null, 
+        ?string $parentTaskUuid = null
+    ): void {
+        $this->subtasks[] = new InputTask(
+            $title, 
+            $description, 
+            $due_date, 
+            $userId, 
+            $parentTaskUuid
+        );
     }
 }

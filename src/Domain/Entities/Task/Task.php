@@ -20,7 +20,12 @@ class Task
         private DateTimeInterface $updated_at,
 
         /** @var Task[] $subtasks */
-        private array $subtasks = []
+        private array $subtasks = [],
+
+        /** @var string|null $userId */
+        private ?string $userId = null,
+
+        private readonly ?string $parentTaskUuid = null,
     ) {}
 
     /**
@@ -35,6 +40,8 @@ class Task
         string $title,
         string $description,
         ?string $due_date = null,
+        ?string $userId = null,
+        ?string $parentTaskUuid = null
     ): Task {
 
         $due_date = ($due_date != null) ? self::date($due_date) : null;
@@ -47,7 +54,10 @@ class Task
             $status,
             $due_date,
             self::date(), 
-            self::date()
+            self::date(),
+            [],
+            $userId,
+            $parentTaskUuid
         );
     }
 

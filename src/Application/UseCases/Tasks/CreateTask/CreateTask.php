@@ -24,7 +24,9 @@ class CreateTask
                     Task::create(
                         $subtask->title,
                         $subtask->description,
-                        $subtask->due_date
+                        $subtask->due_date,
+                        $task->userId,
+                        $task->uuid
                     )
                 );
             }

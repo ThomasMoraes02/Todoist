@@ -54,7 +54,7 @@ class Task
     public function status(TaskStatusCodes $status): void
     {
         $this->status = $status;
-        $this->updated_at = self::date();
+        $this->updated_at = self::date(); 
     }
 
     private static function date(string $date = 'now'): ?DateTimeImmutable

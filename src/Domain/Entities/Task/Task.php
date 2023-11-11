@@ -18,8 +18,19 @@ class Task
         private ?DateTimeInterface $due_date,
         private readonly DateTimeInterface $created_at,
         private DateTimeInterface $updated_at,
+
+        /** @var Task[] $subtasks */
+        private array $subtasks = []
     ) {}
 
+    /**
+     * Create a new Task
+     *
+     * @param string $title
+     * @param string $description
+     * @param string|null $due_date
+     * @return Task
+     */
     public static function create(
         string $title,
         string $description,
@@ -45,6 +56,12 @@ class Task
     private static function date(string $date = 'now'): ?DateTimeImmutable
     {
         return new DateTimeImmutable($date, new DateTimeZone('America/Sao_Paulo'));
+    }
+
+    public function addSubtask(Task $subtask): self
+    {
+        $this->subtasks[] = $subtask;
+        return $this;
     }
 
     public function __get($name): mixed

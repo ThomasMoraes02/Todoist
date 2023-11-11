@@ -18,6 +18,18 @@ class CreateTask
             $input->due_date
         );
 
+        if(!empty($input->subtasks)) {
+            foreach($input->subtasks as $subtask) {
+                $task->addSubtask(
+                    Task::create(
+                        $subtask->title,
+                        $subtask->description,
+                        $subtask->due_date
+                    )
+                );
+            }
+        }
+
         $this->taskRepository->save($task);
 
         return new OutputTask(

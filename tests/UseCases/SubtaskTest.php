@@ -42,5 +42,6 @@ class SubtaskTest extends TestCase
         $this->assertCount(2, $task->subtasks);
         $this->assertEquals('Pó de Café', $task->subtasks[0]->title);
         $this->assertEquals('COMPLETED', $task->subtasks[0]->status->name);
+        $this->assertEquals($task->uuid, $task->subtasks[0]->parentTaskUuid);
     }
 }

@@ -78,6 +78,26 @@ class Task
         return $this;
     }
 
+    public function subtasksCount(): int
+    {
+        return count($this->subtasks) ?? 0;
+    }
+
+    public function subtasksOverdue(): array
+    {
+        return array_filter($this->subtasks, fn(Task $subtask) => $subtask->status == TaskStatusCodes::OVERDUE);
+    }
+
+    public function subtasksPending(): array
+    {
+        return array_filter($this->subtasks, fn(Task $subtask) => $subtask->status == TaskStatusCodes::PENDING);
+    }
+
+    public function subtasksCompleted(): array
+    {
+        return array_filter($this->subtasks, fn(Task $subtask) => $subtask->status == TaskStatusCodes::COMPLETED);
+    }
+
     public function __get($name): mixed
     {
         if(!property_exists($this, $name)) {

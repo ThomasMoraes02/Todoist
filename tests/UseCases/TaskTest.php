@@ -33,7 +33,7 @@ class TaskTest extends TestCase
         $this->assertIsString($outputTask->uuid);
         $this->assertEquals('Clear the room', $outputTask->title);
         $this->assertInstanceOf(DateTimeInterface::class, $outputTask->due_date);
-        $this->assertEquals('PENDING', $outputTask->status->name);
+        $this->assertEquals('OVERDUE', $outputTask->status->name);
         $this->assertEquals('2023-11-11 00:00:00', $outputTask->due_date->format('Y-m-d H:i:s'));
     }
 

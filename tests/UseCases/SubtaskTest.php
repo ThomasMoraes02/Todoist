@@ -44,4 +44,26 @@ class SubtaskTest extends TestCase
         $this->assertEquals('COMPLETED', $task->subtasks[0]->status->name);
         $this->assertEquals($task->uuid, $task->subtasks[0]->parentTaskUuid);
     }
+
+    public function teat_check_subtasks_statuses()
+    {
+        $this->inputTask->subtask('Pó de Café', 'Café Pelé');
+        $this->inputTask->subtask('Pão de Forma', 'Integral');
+        $this->inputTask->subtask('Iogurt', 'Integral');
+        $this->inputTask->subtask('Bananas');
+        $this->inputTask->subtask('Aveia');
+        $this->inputTask->subtask('Granola');
+
+        $outputTask = $this->useCase->execute($this->inputTask);
+        $task = $this->taskRepository->find($outputTask->uuid);
+
+        $task->subtasks[1]->status(TaskStatusCodes::OVERDUE);
+        $task->subtasks[2]->status(TaskStatusCodes::COMPLETED);
+        $task->subtasks[3]->status(TaskStatusCodes::COMPLETED);
+
+        $this->assertEquals(6, $task->subtasksCount());
+        $this->assertEquals(1, $task->subtasksOverdue());
+        $this->assertEquals(2, $task->subtasksCompleted());
+        $this->assertEquals(1, $task->subtasksPending());
+    }
 }

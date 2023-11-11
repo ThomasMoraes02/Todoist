@@ -13,7 +13,7 @@ class Task
     public function __construct(
         private readonly string $uuid,
         private string $title,
-        private string $description,
+        private ?string $description,
         private TaskStatusCodes $status,
         private ?DateTimeInterface $due_date,
         private readonly DateTimeInterface $created_at,
@@ -39,7 +39,7 @@ class Task
         return new Task(
             Uuid::uuid4(),
             $title,
-            $description,
+            $description ?? null,
             TaskStatusCodes::PENDING,
             ($due_date != null) ? self::date($due_date) : null,
             self::date(), 

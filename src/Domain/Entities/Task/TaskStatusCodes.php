@@ -4,6 +4,6 @@ namespace Todoist\Domain\Entities\Task;
 enum TaskStatusCodes : int
 {
     case PENDING = 1;
-    case LATE = 2;
+    case OVERDUE = 2;
     case COMPLETED = 3;
 }

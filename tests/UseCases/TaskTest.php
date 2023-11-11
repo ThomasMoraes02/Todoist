@@ -56,4 +56,20 @@ class TaskTest extends TestCase
         $this->assertInstanceOf(DateTimeInterface::class, $task->updated_at);
         $this->assertEquals($now, $task->updated_at->format('Y-m-d H:i:s'));
     }
+
+    public function test_when_tasks_is_latest()
+    {
+        $inputTask = new InputTask(
+            'Clear the room',
+            'Go to the kitchen and clean the room',
+            '2023-11-09'
+        );
+
+        $outputTask = (new CreateTask($this->taskRepository))->execute($inputTask);
+
+        $task = $this->taskRepository->find($outputTask->uuid);
+
+        $this->assertEquals('2023-11-09 00:00:00', $task->due_date->format('Y-m-d H:i:s'));
+        $this->assertEquals('OVERDUE', $task->status->name);
+    }
 }

@@ -36,12 +36,16 @@ class Task
         string $description,
         ?string $due_date = null,
     ): Task {
+
+        $due_date = ($due_date != null) ? self::date($due_date) : null;
+        $status = ($due_date && $due_date < self::date()) ? TaskStatusCodes::OVERDUE : TaskStatusCodes::PENDING;
+
         return new Task(
             Uuid::uuid4(),
             $title,
             $description ?? null,
-            TaskStatusCodes::PENDING,
-            ($due_date != null) ? self::date($due_date) : null,
+            $status,
+            $due_date,
             self::date(), 
             self::date()
         );

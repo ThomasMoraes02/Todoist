@@ -10,6 +10,7 @@ use Todoist\Application\Repositories\TaskRepository;
 use Todoist\Infra\Repositories\Memory\TaskRepositoryMemory;
 use Todoist\Application\UseCases\Tasks\CreateTask\InputTask;
 use Todoist\Application\UseCases\Tasks\CreateTask\CreateTask;
+use Todoist\Domain\Entities\Task\TaskPriorityCodes;
 
 class TaskTest extends TestCase
 {
@@ -71,5 +72,21 @@ class TaskTest extends TestCase
 
         $this->assertEquals('2023-11-09 00:00:00', $task->due_date->format('Y-m-d H:i:s'));
         $this->assertEquals('OVERDUE', $task->status->name);
+    }
+
+    public function test_when_create_and_update_priority()
+    {
+        $inputTask = new InputTask(
+            'Clear the room',
+            'Go to the kitchen and clean the room',
+            '2023-11-09'
+        );
+
+        $outputTask = (new CreateTask($this->taskRepository))->execute($inputTask);
+        $task = $this->taskRepository->find($outputTask->uuid);
+
+        $task->priority(TaskPriorityCodes::CRITICAL);
+
+        $this->assertEquals('CRITICAL', $task->priority->name);
     }
 }

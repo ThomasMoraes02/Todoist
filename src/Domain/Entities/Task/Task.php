@@ -26,6 +26,8 @@ class Task
         private ?string $userId = null,
 
         private readonly ?string $parentTaskUuid = null,
+
+        private TaskPriorityCodes $priority
     ) {}
 
     /**
@@ -41,7 +43,8 @@ class Task
         string $description,
         ?string $due_date = null,
         ?string $userId = null,
-        ?string $parentTaskUuid = null
+        ?string $parentTaskUuid = null,
+        ?string $priority = null
     ): Task {
 
         $due_date = ($due_date != null) ? self::date($due_date) : null;
@@ -57,8 +60,15 @@ class Task
             self::date(),
             [],
             $userId,
-            $parentTaskUuid
+            $parentTaskUuid,
+            ($priority != null) ? TaskPriorityCodes::from($priority) : TaskPriorityCodes::LOW
         );
+    }
+
+    public function priority(TaskPriorityCodes $priority): void
+    {
+        $this->priority = $priority;
+        $this->updated_at = self::date();
     }
 
     public function status(TaskStatusCodes $status): void

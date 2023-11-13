@@ -10,4 +10,6 @@ interface TaskRepository
     public function find(string $uuid): ?Task;
 
     public function update(Task $task): void;
+
+    public function delete(Task $task): void;
 }

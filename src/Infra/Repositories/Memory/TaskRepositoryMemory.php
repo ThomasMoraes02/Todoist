@@ -22,4 +22,9 @@ class TaskRepositoryMemory implements TaskRepository
     {
         $this->tasks[$task->uuid] = $task;
     }
+
+    public function delete(Task $task): void
+    {
+        unset($this->tasks[$task->uuid]);
+    }
 }

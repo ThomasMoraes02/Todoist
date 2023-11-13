@@ -17,4 +17,9 @@ class TaskRepositoryMemory implements TaskRepository
     {
         return $this->tasks[$uuid] ?? null;
     }
+
+    public function update(Task $task): void
+    {
+        $this->tasks[$task->uuid] = $task;
+    }
 }

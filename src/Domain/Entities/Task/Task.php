@@ -27,7 +27,7 @@ class Task
 
         private readonly ?string $parentTaskUuid = null,
 
-        private TaskPriorityCodes $priority
+        private TaskPriorityCodes $priority,
     ) {}
 
     /**
@@ -62,6 +62,36 @@ class Task
             $userId,
             $parentTaskUuid,
             ($priority != null) ? TaskPriorityCodes::from($priority) : TaskPriorityCodes::LOW
+        );
+    }
+
+    /**
+     * Update Task
+     *
+     * @param string|null $title
+     * @param string|null $description
+     * @param string|null $due_date
+     * @param string|null $priority
+     * @return Task
+     */
+    public function update(
+        ?string $title = null,
+        ?string $description = null,
+        ?string $due_date = null,
+        ?string $priority = null
+    ): Task {
+        return new Task(
+            $this->uuid,
+            $title ?? $this->$title,
+            $description ?? $this->description,
+            $this->status,
+            ($due_date != null) ? self::date($due_date) : $this->due_date,
+            $this->created_at,
+            self::date(),
+            $this->subtasks,
+            $this->userId,
+            $this->parentTaskUuid,
+            ($priority != null) ? TaskPriorityCodes::from($priority) : $this->priority
         );
     }
 

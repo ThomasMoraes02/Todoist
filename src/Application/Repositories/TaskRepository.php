@@ -8,4 +8,6 @@ interface TaskRepository
     public function save(Task $task): void;
 
     public function find(string $uuid): ?Task;
+
+    public function update(Task $task): void;
 }

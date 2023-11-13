@@ -1,5 +1,5 @@
 <?php 
-namespace Todoist\Test\UseCases;
+namespace Todoist\Test\Integration\UseCases\Tasks;
 
 use DateTime;
 use DateTimeZone;

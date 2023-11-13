@@ -1,5 +1,5 @@
 <?php 
-namespace Todoist\Test\UseCases;
+namespace Todoist\Test\Integration\UseCases\Tasks;
 
 use PHPUnit\Framework\TestCase;
 use Todoist\Application\Repositories\TaskRepository;

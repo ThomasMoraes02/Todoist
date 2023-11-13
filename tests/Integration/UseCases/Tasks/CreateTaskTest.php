@@ -12,7 +12,7 @@ use Todoist\Application\UseCases\Tasks\CreateTask\InputTask;
 use Todoist\Application\UseCases\Tasks\CreateTask\CreateTask;
 use Todoist\Domain\Entities\Task\TaskPriorityCodes;
 
-class TaskTest extends TestCase
+class CreateTaskTest extends TestCase
 {
     private TaskRepository $taskRepository;
 

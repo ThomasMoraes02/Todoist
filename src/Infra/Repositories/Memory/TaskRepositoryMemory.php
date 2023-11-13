@@ -27,4 +27,9 @@ class TaskRepositoryMemory implements TaskRepository
     {
         unset($this->tasks[$task->uuid]);
     }
+
+    public function findAllByUserUuid(string $uuid): ?array
+    {
+        return array_filter($this->tasks, fn(Task $task) => $task->userId === $uuid) ?? null;
+    }
 }

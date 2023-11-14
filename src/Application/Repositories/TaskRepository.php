@@ -16,4 +16,6 @@ interface TaskRepository
     public function findAllByUserUuid(string $uuid): ?array;
 
     public function findTasksThatAreDueSoonByUserUuid(string $uuid): ?array;
+
+    public function today(): ?array;
 }

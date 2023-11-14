@@ -2,14 +2,15 @@
 namespace Todoist\Test\Integration\UseCases\Users;
 
 use PHPUnit\Framework\TestCase;
-use Todoist\Application\Repositories\UserRepository;
-use Todoist\Application\UseCases\Users\CreateUser;
+use Todoist\Domain\Entities\User;
+use Todoist\Domain\Entities\Encoder;
+use Todoist\Infra\Encoders\EncoderArgon2Id;
 use Todoist\Application\UseCases\Users\DeleteUser;
 use Todoist\Application\UseCases\Users\UpdateUser;
-use Todoist\Domain\Entities\Encoder;
-use Todoist\Domain\Entities\User;
-use Todoist\Infra\Encoders\EncoderArgon2Id;
+use Todoist\Application\Repositories\UserRepository;
 use Todoist\Infra\Repositories\Memory\UserRepositoryMemory;
+use Todoist\Application\UseCases\Users\CreateUser\InputUser;
+use Todoist\Application\UseCases\Users\CreateUser\CreateUser;
 
 class UserTest extends TestCase
 {
@@ -25,36 +26,36 @@ class UserTest extends TestCase
 
     public function test_create_user(): void
     {
-        $input = [
-            'name' => 'Thomas Moraes',
-            'email' => 'thomas@gmail.com',
-            'password' => '123456'
-        ];
+        $inputCreateUser = new InputUser(
+            'Thomas Moraes',
+            'thomas@gmail.com',
+            '123456'
+        );
 
         $useCase = new CreateUser(self::$userRepository, self::$encoder);
-        $output = $useCase->execute($input);
+        $output = $useCase->execute($inputCreateUser);
 
-        $user = self::$userRepository->byUuid($output['uuid']);
+        $user = self::$userRepository->byUuid($output->uuid);
 
         $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals($input['name'], $user->name);
-        $this->assertEquals($input['email'], $user->email);
-        $this->assertTrue(self::$encoder->decode($input['password'], $user->password));
+        $this->assertEquals($inputCreateUser->name, $user->name);
+        $this->assertEquals($inputCreateUser->email, $user->email);
+        $this->assertTrue(self::$encoder->decode($inputCreateUser->password, $user->password));
     }
 
     public function test_update_user()
     {
-        $inputCreateUser = [
-            'name' => 'Thomas Moraes',
-            'email' => 'thomas@gmail.com',
-            'password' => '123456'
-        ];
+        $inputCreateUser = new InputUser(
+            'Thomas Moraes',
+            'thomas@gmail.com',
+            '123456'
+        );
 
         $useCase = new CreateUser(self::$userRepository, self::$encoder);
         $outputCreateUser = $useCase->execute($inputCreateUser);
 
         $inputUpdateUser = [
-            'uuid' => $outputCreateUser['uuid'],
+            'uuid' => $outputCreateUser->uuid,
             'name' => 'Thomas Vinicius',
             'email' => 'tho@gmail.com'
         ];
@@ -72,17 +73,17 @@ class UserTest extends TestCase
 
     public function test_delete_user()
     {
-        $inputCreateUser = [
-            'name' => 'Thomas Moraes',
-            'email' => 'thomas@gmail.com',
-            'password' => '123456'
-        ];
+        $inputCreateUser = new InputUser(
+            'Thomas Moraes',
+            'thomas@gmail.com',
+            '123456'
+        );
 
         $useCase = new CreateUser(self::$userRepository, self::$encoder);
         $outputCreateUser = $useCase->execute($inputCreateUser);
 
         $inputDeleteUser = [
-            "uuid" => $outputCreateUser["uuid"],
+            "uuid" => $outputCreateUser->uuid,
         ];
 
         $useCase = new DeleteUser(self::$userRepository);

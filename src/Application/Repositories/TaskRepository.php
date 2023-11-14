@@ -14,4 +14,6 @@ interface TaskRepository
     public function delete(Task $task): void;
 
     public function findAllByUserUuid(string $uuid): ?array;
+
+    public function findTasksThatAreDueSoonByUserUuid(string $uuid): ?array;
 }

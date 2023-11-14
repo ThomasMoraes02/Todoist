@@ -15,7 +15,8 @@ class CreateTask
         $task = Task::create(
             $input->title,
             $input->description,
-            $input->due_date
+            $input->due_date,
+            $input->userId
         );
 
         if(!empty($input->subtasks)) {

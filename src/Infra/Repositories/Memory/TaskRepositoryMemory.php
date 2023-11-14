@@ -1,8 +1,10 @@
 <?php 
 namespace Todoist\Infra\Repositories\Memory;
 
-use Todoist\Application\Repositories\TaskRepository;
+use DateTime;
+use DateTimeZone;
 use Todoist\Domain\Entities\Task\Task;
+use Todoist\Application\Repositories\TaskRepository;
 
 class TaskRepositoryMemory implements TaskRepository
 {
@@ -31,5 +33,13 @@ class TaskRepositoryMemory implements TaskRepository
     public function findAllByUserUuid(string $uuid): ?array
     {
         return array_filter($this->tasks, fn(Task $task) => $task->userId === $uuid) ?? null;
+    }
+
+    public function findTasksThatAreDueSoonByUserUuid(string $uuid): ?array
+    {
+        $today = new DateTime('now', new DateTimeZone('America/Sao_Paulo'));
+        $tasks = $this->findAllByUserUuid($uuid);
+
+        return array_filter($tasks, fn(Task $task) => $today->diff($task->due_date)->days > 0) ?? null;
     }
 }

@@ -11,6 +11,8 @@ use Todoist\Infra\Repositories\Memory\TaskRepositoryMemory;
 use Todoist\Application\UseCases\Tasks\CreateTask\InputTask;
 use Todoist\Application\UseCases\Tasks\CreateTask\CreateTask;
 use Todoist\Domain\Entities\Task\TaskPriorityCodes;
+use Todoist\Domain\Entities\User;
+use Todoist\Infra\Encoders\EncoderArgon2Id;
 
 class CreateTaskTest extends TestCase
 {
@@ -89,4 +91,58 @@ class CreateTaskTest extends TestCase
 
         $this->assertEquals('CRITICAL', $task->priority->name);
     }
-}
+
+    /**
+     * @dataProvider tasks
+     *
+     * @param array $tasks
+     * @return void
+     */
+    public function test_must_find_tasks_that_are_due_soon(array $tasks)
+    {
+        $user = User::create('Thomas', 'thomas@gmail.com', '123456', new EncoderArgon2Id());
+
+        foreach ($tasks as $task) {
+            $inputTask = new InputTask(
+                $task['title'],
+                $task['description'],
+                $task['due_date'],
+                $user->uuid
+            );
+
+            $outputsTasks[] = (new CreateTask($this->taskRepository))->execute($inputTask);
+        }
+
+        $tasksDueSoon = $this->taskRepository->findTasksThatAreDueSoonByUserUuid($user->uuid);
+        
+        $this->assertCount(2, $tasksDueSoon);
+    }
+
+    public static function tasks(): array
+    {
+        $today = (new DateTime('now', new DateTimeZone('America/Sao_Paulo')))->format('Y-m-d H:i:s');
+        $todayMore20days = (new DateTime('now', new DateTimeZone('America/Sao_Paulo')))->modify('+20 days')->format('Y-m-d H:i:s');
+
+        return [
+            [
+                [
+                    [
+                        'title' => 'Task 1',
+                        'description' => 'Description 1',
+                        'due_date' => $todayMore20days
+                    ],
+                    [
+                        'title' => 'Task 2',
+                        'description' => 'Description 2',
+                        'due_date' => $todayMore20days
+                    ],
+                    [
+                        'title' => 'Task 3',
+                        'description' => 'Description 3',
+                        'due_date' => $today
+                    ]
+                ]
+            ],
+        ];
+    }
+}   

@@ -16,7 +16,8 @@ class CreateTask
             $input->title,
             $input->description,
             $input->due_date,
-            $input->userId
+            $input->userId,
+            $input->parentTaskUuid
         );
 
         if(!empty($input->subtasks)) {

@@ -14,14 +14,14 @@ class TaskRepositoryMysql implements TaskRepository
 
     public function find(string $uuid): ?Task
     {
-        $statement = $this->pdo->prepare('SELECT * FROM tasks WHERE uuid = :uuid');
+        $statement = $this->pdo->prepare('SELECT * FROM tasks WHERE uuid = :uuid AND parentTaskUuid IS NULL');
         $statement->bindValue('uuid', $uuid, PDO::PARAM_STR);
         $statement->execute();
         $task = $statement->fetch(PDO::FETCH_ASSOC);
 
         if (!$task) return null;
 
-        return new Task(
+        $task = new Task(
             $task['uuid'],
             $task['title'],
             $task['description'],
@@ -29,11 +29,38 @@ class TaskRepositoryMysql implements TaskRepository
             (new DateTime($task['due_date'])),
             (new DateTime($task['created_at'])),
             (new DateTime($task['updated_at'])),
-            $task['subtasks'] ?? [],
+            [],
             $task['userId'],
             $task['parentTaskUuid'],
             TaskPriorityCodes::from($task['priority'])
         );
+
+        $statement = $this->pdo->prepare('SELECT * FROM tasks WHERE parentTaskUuid = :uuid');
+        $statement->bindValue('uuid', $uuid, PDO::PARAM_STR);
+        $statement->execute();
+        $subtasks = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        if(!empty($subtasks)) {
+            foreach($subtasks as $subtask) {
+                $task->addSubtask(
+                    new Task(
+                        $subtask['uuid'],
+                        $subtask['title'],
+                        $subtask['description'],
+                        TaskStatusCodes::from($subtask['status']),
+                        (new DateTime($subtask['due_date'])),
+                        (new DateTime($subtask['created_at'])),
+                        (new DateTime($subtask['updated_at'])),
+                        [],
+                        $subtask['userId'],
+                        $subtask['parentTaskUuid'],
+                        TaskPriorityCodes::from($subtask['priority'])
+                    )
+                );
+            }
+        }
+
+        return $task;
     }
 
     /**
@@ -93,9 +120,9 @@ class TaskRepositoryMysql implements TaskRepository
         $stmt->bindValue(':title', $task->title);
         $stmt->bindValue(':description', $task->description);
         $stmt->bindValue(':status', $task->status->value);
-        $stmt->bindValue(':due_date', $task->due_date->format('Y-m-d H:i:s'));
-        $stmt->bindValue(':created_at', $task->created_at->format('Y-m-d H:i:s') ?? '');
-        $stmt->bindValue(':updated_at', $task->updated_at->format('Y-m-d H:i:s') ?? '');
+        $stmt->bindValue(':due_date', ($task->due_date) ? $task->due_date->format('Y-m-d H:i:s') : '');
+        $stmt->bindValue(':created_at', ($task->created_at) ? $task->created_at->format('Y-m-d H:i:s') : '');
+        $stmt->bindValue(':updated_at', ($task->updated_at) ? $task->updated_at->format('Y-m-d H:i:s') : '');
         $stmt->bindValue(':userId', $task->userId);
         $stmt->bindValue(':parentTaskUuid', $task->parentTaskUuid);
         $stmt->bindValue(':priority', $task->priority->value);

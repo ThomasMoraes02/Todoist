@@ -98,6 +98,63 @@ class TaskRepositoryMysqlTest extends TestCase
         $this->assertNull($task);
     }
 
+    /**
+     * @dataProvider subtasks
+     *
+     * @return void
+     */
+    public function test_create_subtasks(array $subtasks): void
+    {
+        foreach ($subtasks as $subtask) {
+            $inputTask = new InputTask(
+                $subtask['title'],
+                $subtask['description'],
+                $subtask['due_date'],
+                $this->task->userId,
+                $this->task->uuid
+            );
+
+            $useCase = new CreateTask(self::$taskRepository);
+            $output = $useCase->execute($inputTask);
+
+            $this->assertEquals($output->parentTaskUuid, $this->task->uuid);
+        }
+
+        $task = self::$taskRepository->find($this->task->uuid);
+
+        $this->assertCount(3, $task->subtasks);
+    }
+
+    /**
+     * Subtasks for test
+     *
+     * @return array
+     */
+    public static function subtasks(): array
+    {
+        return [
+            [
+                [
+                    [
+                        'title' => 'Leite',
+                        'description' => null,
+                        'due_date' => null,
+                    ],
+                    [
+                        'title' => 'Cafe',
+                        'description' => null,
+                        'due_date' => null,
+                    ],
+                    [
+                        'title' => 'Arroz',
+                        'description' => null,
+                        'due_date' => null,
+                    ]
+                ]
+            ]
+        ];
+    }
+
     protected function tearDown(): void
     {
         self::$pdo->rollBack();

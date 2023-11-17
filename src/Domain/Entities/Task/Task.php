@@ -40,7 +40,7 @@ class Task
      */
     public static function create(
         string $title,
-        string $description,
+        ?string $description,
         ?string $due_date = null,
         ?string $userId = null,
         ?string $parentTaskUuid = null,

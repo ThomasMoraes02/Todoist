@@ -60,9 +60,8 @@ class TaskRepositoryMysql implements TaskRepository
 
     public function delete(Task $task): void
     {
-        $stmt = $this->pdo->prepare('DELETE FROM tasks WHERE uuid = :uuid AND parentTaskUuid = :parentTaskUuid');
+        $stmt = $this->pdo->prepare('DELETE FROM tasks WHERE uuid = :uuid');
         $stmt->bindValue(':uuid', $task->uuid);
-        $stmt->bindValue(':parentTaskUuid', $task->parentTaskUuid);
         $stmt->execute();
     }
 

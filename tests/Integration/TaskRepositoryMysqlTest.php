@@ -7,13 +7,14 @@ use DateTimeZone;
 use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Todoist\Domain\Entities\Task\Task;
-use Todoist\Domain\Entities\Task\TaskStatusCodes;
 use Todoist\Domain\Entities\Task\TaskPriorityCodes;
 use Todoist\Application\Repositories\TaskRepository;
 use Todoist\Infra\Repositories\Mysql\TaskRepositoryMysql;
 use Todoist\Application\UseCases\Tasks\CreateTask\InputTask;
 use Todoist\Application\UseCases\Tasks\CreateTask\CreateTask;
+use Todoist\Application\UseCases\Tasks\DeleteTask\DeleteTask;
 use Todoist\Application\UseCases\Tasks\UpdateTask\UpdateTask;
+use Todoist\Application\UseCases\Tasks\DeleteTask\InputTask as DeleteTaskInputTask;
 use Todoist\Application\UseCases\Tasks\UpdateTask\InputTask as UpdateTaskInputTask;
 
 class TaskRepositoryMysqlTest extends TestCase
@@ -82,6 +83,19 @@ class TaskRepositoryMysqlTest extends TestCase
 
         $this->assertEquals('Mercado', $task->title);
         $this->assertEquals('Lista de compras do mês', $task->description);
+    }
+
+    public function test_delete_task()
+    {
+        $inputTask = new DeleteTaskInputTask(
+            $this->task->uuid
+        );
+
+        (new DeleteTask(self::$taskRepository))->execute($inputTask);
+
+        $task = self::$taskRepository->find($this->task->uuid);
+
+        $this->assertNull($task);
     }
 
     protected function tearDown(): void

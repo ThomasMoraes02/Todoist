@@ -16,11 +16,11 @@ class UpdateTask
         $task = $this->taskRepository->find($input->uuid);
         if (!$task) throw new DomainException('Task not found');
 
-        $task->update(
-            $input->title,
-            $input->description,
-            $input->due_date,
-            $input->priority
+        $task = $task->update(
+            $input->title ?? $task->title,
+            $input->description ?? $task->description,
+            $input->due_date ?? $task->due_date->format('Y-m-d H:i:s'),
+            $input->priority ?? $task->priority->value
         );
 
         $this->taskRepository->update($task);

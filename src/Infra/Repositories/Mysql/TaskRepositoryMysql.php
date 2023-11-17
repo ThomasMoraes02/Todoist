@@ -2,8 +2,11 @@
 namespace Todoist\Infra\Repositories\Mysql;
 
 use PDO;
-use Todoist\Application\Repositories\TaskRepository;
+use DateTime;
 use Todoist\Domain\Entities\Task\Task;
+use Todoist\Domain\Entities\Task\TaskStatusCodes;
+use Todoist\Domain\Entities\Task\TaskPriorityCodes;
+use Todoist\Application\Repositories\TaskRepository;
 
 class TaskRepositoryMysql implements TaskRepository
 {
@@ -22,14 +25,14 @@ class TaskRepositoryMysql implements TaskRepository
             $task['uuid'],
             $task['title'],
             $task['description'],
-            $task['status'],
-            $task['due_date'],
-            $task['created_at'],
-            $task['updated_at'],
-            $task['subtasks'],
+            TaskStatusCodes::from($task['status']),
+            (new DateTime($task['due_date'])),
+            (new DateTime($task['created_at'])),
+            (new DateTime($task['updated_at'])),
+            $task['subtasks'] ?? [],
             $task['userId'],
             $task['parentTaskUuid'],
-            $task['priority']
+            TaskPriorityCodes::from($task['priority'])
         );
     }
 
@@ -41,7 +44,7 @@ class TaskRepositoryMysql implements TaskRepository
      */
     public function save(Task $task): void
     {
-        $this->persistOrUpdate('INSERT INTO tasks VALUES (:uuid, :title, :description, :status, :due_date, :created_at, :updated_at, :subtasks, :userId, :parentTaskUuid, :priority)', $task);
+        $this->persistOrUpdate('INSERT INTO tasks VALUES (:uuid, :title, :description, :status, :due_date, :created_at, :updated_at, :userId, :parentTaskUuid, :priority)', $task);
     }
 
     /**
@@ -52,7 +55,7 @@ class TaskRepositoryMysql implements TaskRepository
      */
     public function update(Task $task): void
     {
-        $this->persistOrUpdate('UPDATE tasks SET title = :title, description = :description, due_date = :due_date, priority = :priority, updated_at = :updated_at WHERE uuid = :uuid', $task);
+        $this->persistOrUpdate('UPDATE tasks SET uuid = :uuid, title = :title, description = :description, status = :status, due_date = :due_date, created_at = :created_at, updated_at = :updated_at, userId = :userId, parentTaskUuid = :parentTaskUuid, priority = :priority WHERE uuid = :uuid', $task);
     }
 
     public function delete(Task $task): void
@@ -90,14 +93,13 @@ class TaskRepositoryMysql implements TaskRepository
         $stmt->bindValue(':uuid', $task->uuid);
         $stmt->bindValue(':title', $task->title);
         $stmt->bindValue(':description', $task->description);
-        $stmt->bindValue(':status', $task->status);
-        $stmt->bindValue(':due_date', $task->due_date);
-        $stmt->bindValue(':created_at', $task->created_at);
-        $stmt->bindValue(':updated_at', $task->updated_at);
-        $stmt->bindValue(':subtasks', json_encode($task->subtasks));
+        $stmt->bindValue(':status', $task->status->value);
+        $stmt->bindValue(':due_date', $task->due_date->format('Y-m-d H:i:s'));
+        $stmt->bindValue(':created_at', $task->created_at->format('Y-m-d H:i:s') ?? '');
+        $stmt->bindValue(':updated_at', $task->updated_at->format('Y-m-d H:i:s') ?? '');
         $stmt->bindValue(':userId', $task->userId);
         $stmt->bindValue(':parentTaskUuid', $task->parentTaskUuid);
-        $stmt->bindValue(':priority', $task->priority);
+        $stmt->bindValue(':priority', $task->priority->value);
 
         $stmt->execute();
     }

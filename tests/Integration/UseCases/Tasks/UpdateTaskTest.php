@@ -30,7 +30,6 @@ class UpdateTaskTest extends TestCase
 
         $currentUuid = $outputTask->uuid;
         $currentCreatedAt = $outputTask->created_at;
-        $currentUpdatedAt = $outputTask->updated_at;
 
         $inputUpdateTask = new InputTask(
             $outputTask->uuid,
@@ -42,7 +41,7 @@ class UpdateTaskTest extends TestCase
 
         $this->assertSame($currentUuid, $outputTask->uuid);
         $this->assertTrue($currentCreatedAt == $outputTask->created_at);
-        $this->assertEquals('Clear the kitchen', $outputTask->title);
-        $this->assertEquals('Go to the kitchen and clean the room', $outputTask->description);
+        $this->assertEquals('Clear the room', $outputTask->title);
+        $this->assertEquals('Only clear the room because i am tired', $outputTask->description);
     }
 }

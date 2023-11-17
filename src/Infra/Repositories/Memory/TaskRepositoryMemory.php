@@ -42,10 +42,4 @@ class TaskRepositoryMemory implements TaskRepository
 
         return array_filter($tasks, fn(Task $task) => $today->diff($task->due_date)->days > 0) ?? null;
     }
-
-    public function today(): ?array
-    {
-        $today = new DateTime('now', new DateTimeZone('America/Sao_Paulo'));
-        return array_filter($this->tasks, fn(Task $task) => $today->diff($task->due_date)->days === 0) ?? null;
-    }
 }

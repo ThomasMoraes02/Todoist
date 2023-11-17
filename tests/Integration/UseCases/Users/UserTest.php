@@ -6,11 +6,12 @@ use Todoist\Domain\Entities\User;
 use Todoist\Domain\Entities\Encoder;
 use Todoist\Infra\Encoders\EncoderArgon2Id;
 use Todoist\Application\UseCases\Users\DeleteUser;
-use Todoist\Application\UseCases\Users\UpdateUser;
 use Todoist\Application\Repositories\UserRepository;
 use Todoist\Infra\Repositories\Memory\UserRepositoryMemory;
 use Todoist\Application\UseCases\Users\CreateUser\InputUser;
 use Todoist\Application\UseCases\Users\CreateUser\CreateUser;
+use Todoist\Application\UseCases\Users\UpdateUser\UpdateUser;
+use Todoist\Application\UseCases\Users\UpdateUser\InputUser as UpdateUserInputUser;
 
 class UserTest extends TestCase
 {
@@ -54,20 +55,20 @@ class UserTest extends TestCase
         $useCase = new CreateUser(self::$userRepository, self::$encoder);
         $outputCreateUser = $useCase->execute($inputCreateUser);
 
-        $inputUpdateUser = [
-            'uuid' => $outputCreateUser->uuid,
-            'name' => 'Thomas Vinicius',
-            'email' => 'tho@gmail.com'
-        ];
+        $inputUpdateUser = new UpdateUserInputUser(
+            $outputCreateUser->uuid,
+            'Thomas Vinicius',
+            'tho@gmail.com'
+        );
 
         $useCase = new UpdateUser(self::$userRepository, self::$encoder);
         $outputUpdateUser = $useCase->execute($inputUpdateUser);
 
-        $user = self::$userRepository->byUuid($outputUpdateUser['uuid']);
+        $user = self::$userRepository->byUuid($outputUpdateUser->uuid);
 
         $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals($inputUpdateUser['name'], $user->name);
-        $this->assertEquals($inputUpdateUser['email'], $user->email);
+        $this->assertEquals($inputUpdateUser->name, $user->name);
+        $this->assertEquals($inputUpdateUser->email, $user->email);
         $this->assertTrue(self::$encoder->decode('123456', $user->password));
     }
 

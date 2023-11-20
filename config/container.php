@@ -11,7 +11,7 @@ use function DI\get;
 $containerBuilder = new ContainerBuilder();
 $containerBuilder->addDefinitions([
     'PDO' => function(): PDO {
-        $pdo = new PDO("sqlite:memory:");
+        $pdo = new PDO("sqlite:" . __DIR__ . "/../database/database.sqlite");
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     },

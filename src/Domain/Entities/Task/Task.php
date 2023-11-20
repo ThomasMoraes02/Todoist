@@ -66,6 +66,44 @@ class Task
     }
 
     /**
+     * Restore a Task
+     *
+     * @param string $uuid
+     * @param string $title
+     * @param string|null $description
+     * @param string|null $status
+     * @param string|null $due_date
+     * @param string|null $userId
+     * @param string|null $parentTaskUuid
+     * @param string|null $priority
+     * @return Task
+     */
+    public static function restore(
+        string $uuid,
+        string $title,
+        ?string $description,
+        ?string $status = null,
+        ?string $due_date = null,
+        ?string $userId = null,
+        ?string $parentTaskUuid = null,
+        ?string $priority = null
+    ): Task {
+        return new Task(
+            $uuid,
+            $title,
+            $description,
+            TaskStatusCodes::from($status),
+            ($due_date != null) ? self::date($due_date) : null,
+            self::date(),
+            self::date(),
+            [],
+            $userId,
+            $parentTaskUuid,
+            ($priority != null) ? TaskPriorityCodes::from($priority) : TaskPriorityCodes::LOW
+        );
+    }
+
+    /**
      * Update Task
      *
      * @param string|null $title

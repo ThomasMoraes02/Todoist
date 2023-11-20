@@ -11,6 +11,7 @@ use Todoist\Application\UseCases\Users\CreateUser\InputUser;
 use Todoist\Application\UseCases\Users\CreateUser\CreateUser;
 use Todoist\Application\UseCases\Users\UpdateUser\UpdateUser;
 use Todoist\Application\UseCases\Users\UpdateUser\InputUser as UpdateUserInputUser;
+use Todoist\Domain\Factories\UserFactory;
 
 class UserRepositoryMysqlTest extends TestCase
 {
@@ -30,7 +31,7 @@ class UserRepositoryMysqlTest extends TestCase
         self::$pdo->exec('CREATE TABLE IF NOT EXISTS users (uuid TEXT, name TEXT, email TEXT, password TEXT)');
 
         self::$encoder = new EncoderArgon2Id();
-        self::$userRepository = new UserRepositoryMysql(self::$pdo, self::$encoder);
+        self::$userRepository = new UserRepositoryMysql(self::$pdo, new UserFactory(self::$encoder));
     }
 
     protected function setUp(): void

@@ -5,11 +5,12 @@ use PDO;
 use Todoist\Application\Repositories\UserRepository;
 use Todoist\Domain\Entities\Encoder;
 use Todoist\Domain\Entities\User;
+use Todoist\Domain\Factories\UserFactory;
 use Todoist\Domain\ValueObjects\Email;
 
 class UserRepositoryMysql implements UserRepository
 {
-    public function __construct(private PDO $pdo, private Encoder $encoder) {}
+    public function __construct(private PDO $pdo, private UserFactory $userFactory) {}
 
     public function byUuid(string $uuid): ?User
     {
@@ -21,12 +22,11 @@ class UserRepositoryMysql implements UserRepository
 
         if (!$row) return null;
 
-        return new User(
+        return $this->userFactory->restore(
             $row['uuid'],
             $row['name'],
-            new Email($row['email']),
-            $row['password'],
-            $this->encoder
+            $row['email'],
+            $row['password']
         );
     }
 
@@ -40,12 +40,11 @@ class UserRepositoryMysql implements UserRepository
 
         if (!$row) return null;
 
-        return new User(
+        return $this->userFactory->restore(
             $row['uuid'],
             $row['name'],
-            new Email($row['email']),
-            $row['password'],
-            $this->encoder
+            $row['email'],
+            $row['password']
         );
     }
 

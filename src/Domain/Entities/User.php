@@ -37,6 +37,17 @@ class User
         );
     }
 
+    public static function restore(string $uuid, string $name, string $email, string $password, Encoder $encoder): User
+    {
+        return new User(
+            $uuid,
+            $name,
+            new Email($email),
+            $encoder->encode($password),
+            $encoder
+        );
+    }
+
     public function __get(string $name)
     {
         if(!property_exists($this, $name)) {

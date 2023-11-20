@@ -6,7 +6,7 @@ use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Todoist\Infra\Logs\MonologAdapter;
 
-class LogginTest extends TestCase
+class Loggin extends TestCase
 {
     public function test_create_log(): void
     {

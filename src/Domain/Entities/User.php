@@ -26,17 +26,6 @@ class User
         );
     }
 
-    public function update(string $name, string $email, string $password, Encoder $encoder): User
-    {
-        return new User(
-            $this->uuid,
-            $name,
-            new Email($email),
-            $encoder->encode($password),
-            $encoder
-        );
-    }
-
     public static function restore(string $uuid, string $name, string $email, string $password, Encoder $encoder): User
     {
         return new User(

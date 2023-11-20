@@ -12,6 +12,7 @@ use Todoist\Application\UseCases\Users\CreateUser\InputUser;
 use Todoist\Application\UseCases\Users\CreateUser\CreateUser;
 use Todoist\Application\UseCases\Users\UpdateUser\UpdateUser;
 use Todoist\Application\UseCases\Users\UpdateUser\InputUser as UpdateUserInputUser;
+use Todoist\Domain\Factories\UserFactory;
 
 class UserTest extends TestCase
 {
@@ -19,10 +20,13 @@ class UserTest extends TestCase
 
     public static Encoder $encoder;
 
+    public static UserFactory $userFactory;
+
     public static function setUpBeforeClass(): void
     {
         self::$userRepository = new UserRepositoryMemory();
         self::$encoder = new EncoderArgon2Id();
+        self::$userFactory = new UserFactory(self::$encoder);
     }
 
     public function test_create_user(): void
@@ -33,7 +37,7 @@ class UserTest extends TestCase
             '123456'
         );
 
-        $useCase = new CreateUser(self::$userRepository, self::$encoder);
+        $useCase = new CreateUser(self::$userRepository, self::$userFactory);
         $output = $useCase->execute($inputCreateUser);
 
         $user = self::$userRepository->byUuid($output->uuid);
@@ -52,7 +56,7 @@ class UserTest extends TestCase
             '123456'
         );
 
-        $useCase = new CreateUser(self::$userRepository, self::$encoder);
+        $useCase = new CreateUser(self::$userRepository, self::$userFactory);
         $outputCreateUser = $useCase->execute($inputCreateUser);
 
         $inputUpdateUser = new UpdateUserInputUser(
@@ -61,7 +65,7 @@ class UserTest extends TestCase
             'tho@gmail.com'
         );
 
-        $useCase = new UpdateUser(self::$userRepository, self::$encoder);
+        $useCase = new UpdateUser(self::$userRepository, self::$userFactory);
         $outputUpdateUser = $useCase->execute($inputUpdateUser);
 
         $user = self::$userRepository->byUuid($outputUpdateUser->uuid);
@@ -80,7 +84,7 @@ class UserTest extends TestCase
             '123456'
         );
 
-        $useCase = new CreateUser(self::$userRepository, self::$encoder);
+        $useCase = new CreateUser(self::$userRepository, self::$userFactory);
         $outputCreateUser = $useCase->execute($inputCreateUser);
 
         $inputDeleteUser = [

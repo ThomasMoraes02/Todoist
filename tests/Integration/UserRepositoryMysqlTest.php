@@ -21,6 +21,8 @@ class UserRepositoryMysqlTest extends TestCase
 
     private static Encoder $encoder;
 
+    private static UserFactory $userFactory;
+
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
@@ -31,7 +33,8 @@ class UserRepositoryMysqlTest extends TestCase
         self::$pdo->exec('CREATE TABLE IF NOT EXISTS users (uuid TEXT, name TEXT, email TEXT, password TEXT)');
 
         self::$encoder = new EncoderArgon2Id();
-        self::$userRepository = new UserRepositoryMysql(self::$pdo, new UserFactory(self::$encoder));
+        self::$userFactory = new UserFactory(self::$encoder);
+        self::$userRepository = new UserRepositoryMysql(self::$pdo, self::$userFactory);
     }
 
     protected function setUp(): void
@@ -41,7 +44,7 @@ class UserRepositoryMysqlTest extends TestCase
 
     public function test_must_save_and_update_user_in_mysql_repository()
     {
-        $useCase = new CreateUser(self::$userRepository, self::$encoder);
+        $useCase = new CreateUser(self::$userRepository, self::$userFactory);
 
         $inputCreateUser = new InputUser(
             'Thomas Moraes',
@@ -51,7 +54,7 @@ class UserRepositoryMysqlTest extends TestCase
 
         $output = $useCase->execute($inputCreateUser);
 
-        $useCase = new UpdateUser(self::$userRepository, self::$encoder);
+        $useCase = new UpdateUser(self::$userRepository, self::$userFactory);
 
         $inputUpdateUser = new UpdateUserInputUser(
             $output->uuid,

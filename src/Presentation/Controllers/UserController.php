@@ -26,28 +26,19 @@ class UserController
     {
         $payload = json_decode($request->getBody()->getContents(), true);
 
-        try {
-            $input = new InputUser(
-                $payload['name'],
-                $payload['email'],
-                $payload['password']
-            );
+        $input = new InputUser(
+            $payload['name'],
+            $payload['email'],
+            $payload['password']
+        );
 
-            $useCase = new CreateUser($this->userRepository, $this->userFactory);
-            $output = $useCase->execute($input);
-        } catch(InvalidArgumentException $e) {
-            $response->getBody()->write(json_encode(['message' => $e->getMessage()]));
-            return $response->withHeader('Content-Type', 'application/json; charset=utf-8')->withStatus(400);
-        }
+        $useCase = new CreateUser($this->userRepository, $this->userFactory);
+        $output = $useCase->execute($input);
 
         $response->getBody()->write(json_encode([
             'uuid' => $output->uuid
         ]));
-        return $response->withHeader('Content-Type', 'application/json; charset=utf-8')
-        ->withHeader("Cache-Control", "no-cache")
-        ->withHeader("Cache-Control", "max-age=0")
-        ->withHeader("Cache-Control", "must-revalidate")
-        ->withHeader("Cache-Control", "proxy-revalidate")
-        ->withStatus(201);
+
+        return $response->withStatus(201);
     }
 }

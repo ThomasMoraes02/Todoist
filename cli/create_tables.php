@@ -1,9 +1,7 @@
 <?php 
 
-$databasePath = require __DIR__ . "/../database/database.sqlite";
-
 try {
-    $pdo = new PDO('sqlite:' . $databasePath);
+    $pdo = new PDO('sqlite:' . __DIR__ . "/../database/database.sqlite");
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $pdo->beginTransaction();
@@ -16,3 +14,5 @@ try {
     $pdo->rollBack();
     echo $e->getMessage();
 }
+
+echo 'Ok!';

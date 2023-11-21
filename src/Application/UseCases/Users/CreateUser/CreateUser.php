@@ -17,7 +17,7 @@ class CreateUser
         $userExists = $this->userRepository->byEmail(new Email($input->email));
 
         if($userExists) {
-            die();
+            throw new InvalidArgumentException('User already exists');
         }
 
         if($userExists) throw new InvalidArgumentException('User already exists');

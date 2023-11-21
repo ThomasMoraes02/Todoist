@@ -6,6 +6,8 @@ use Psr\Container\ContainerInterface;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 use Todoist\Application\Repositories\UserRepository;
+use Todoist\Application\UseCases\Users\CreateUser\CreateUser;
+use Todoist\Application\UseCases\Users\CreateUser\InputUser;
 use Todoist\Domain\Factories\UserFactory;
 
 class UserController
@@ -25,20 +27,21 @@ class UserController
         $payload = json_decode($request->getBody()->getContents(), true);
 
         try {
-            $userCreated = $this->userFactory->create($payload['name'], $payload['email'], $payload['password']);
-            $this->userRepository->save($userCreated);
-    
-            $user = $this->userRepository->byUuid($userCreated->uuid);
+            $input = new InputUser(
+                $payload['name'],
+                $payload['email'],
+                $payload['password']
+            );
+
+            $useCase = new CreateUser($this->userRepository, $this->userFactory);
+            $output = $useCase->execute($input);
         } catch(InvalidArgumentException $e) {
-            $response->getBody()->write(json_encode([
-                'message' => $e->getMessage()
-            ]));
-            return $response->withHeader('Content-Type', 'application/json; charset=utf-8')
-            ->withStatus(400);
+            $response->getBody()->write(json_encode(['message' => $e->getMessage()]));
+            return $response->withHeader('Content-Type', 'application/json; charset=utf-8')->withStatus(400);
         }
 
         $response->getBody()->write(json_encode([
-            'uuid' => $user->uuid
+            'uuid' => $output->uuid
         ]));
         return $response->withHeader('Content-Type', 'application/json; charset=utf-8')
         ->withHeader("Cache-Control", "no-cache")

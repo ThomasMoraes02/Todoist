@@ -17,4 +17,5 @@ $app->get("/", function (Request $request, Response $response, array $args) {
     return $response; 
 });
 
+$app->get('/users[/{uuid}]', [UserController::class, 'show']);
 $app->post("/users", [UserController::class, 'store']);

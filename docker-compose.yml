@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  webserver:
+    build: .
+    volumes:
+      - .:/var/www/html
+    links:
+      - mysql
+    ports:
+      - 40:80
+    entrypoint: ["php", "-S", "0.0.0.0:80", "-t", "/var/www/html/public"]
+
+  mysql:
+    image: mysql:latest
+    ports:
+      - 3309:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./docker/mysql:/var/lib/mysql

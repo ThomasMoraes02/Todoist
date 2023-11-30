@@ -4,3 +4,4 @@ logs/app.log
 memory:
 database/database.sqlite
 1
+docker
